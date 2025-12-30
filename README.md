@@ -26,6 +26,84 @@ Top-level modules:
 
 ---
 
+# Available Datasets and Models
+
+## Datasets
+
+### Image Classification Datasets
+
+The following datasets are supported in the centralized and federated pipelines:
+
+- **CIFAR-10**  
+- **CIFAR-100**  
+- **SVHN**  
+
+These datasets are typically loaded using torchvision utilities and are split consistently across training and test sets.  
+In federated learning experiments, the training data is partitioned across clients, while the test set remains centralized at the server.
+
+---
+## Medical Datasets
+
+Medical experiments in this repository are conducted using datasets from the **MedMNIST** collection, a curated benchmark suite designed for lightweight and standardized evaluation of medical image classification tasks.
+
+The following MedMNIST datasets are currently supported and used in this repository:
+
+- **PneumoniaMNIST**  
+  A chest X-ray dataset for binary classification, focusing on pneumonia detection.
+
+- **OCTMNIST**  
+  An optical coherence tomography (OCT) dataset for multi-class retinal disease classification.
+
+- **BreastMNIST**  
+  A breast ultrasound dataset used for binary classification of benign vs malignant cases.
+
+The datasets are obtained directly from the **MedMNIST** benchmark and follow its standardized preprocessing and label definitions.
+
+---
+
+## Segmentation Dataset
+
+### ISIC 2016 Skin Lesion Dataset
+
+Segmentation experiments in this repository are conducted using the **ISIC 2016 Challenge dataset**, released by the International Skin Imaging Collaboration (ISIC).
+
+The dataset consists of dermoscopic images with corresponding pixel-wise annotations for skin lesion segmentation. It is widely used as a benchmark for evaluating medical image segmentation models under realistic clinical variability.
+
+
+---
+
+## Model Architectures
+
+### Classification Models
+
+The following architectures are currently supported:
+
+- **ResNet-18**
+- **ResNet-34**
+- **MobileNetV3-Small**
+- **MobileNetV3-Large**
+
+These models are used for both centralized and federated experiments.  Dropout layers are explicitly enabled during inference for sensitivity analysis.
+
+---
+
+## Segmentation Models
+
+The following segmentation architectures are currently supported and evaluated:
+
+- **U-Net**  
+- **U-Net++**  
+- **DeepLabV3**  
+- **DeepLabV3+**  
+
+---
+
+
+
+
+
+
+
 ## Setup
 
 ### 1) Create an environment (recommended)

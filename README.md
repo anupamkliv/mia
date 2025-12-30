@@ -6,10 +6,21 @@ This repository contains the experimental code used in the study **“Can Federa
 
 Top-level modules:
 
-- `centralized/` — centralized training + inference-time dropout analysis utilities
-- `centralized_medical/` — centralized experiments for medical datasets/tasks
-- `fl/` — federated learning training and evaluation (e.g., global aggregated model checkpoints)
-- `prior/` — prior / baseline implementations used for comparison
+- **centralized/**
+  - Trains models in a standard centralized setup
+  - Performs inference-time dropout analysis on the trained target model
+
+- **centralized_medical/**
+  - Centralized pipelines adapted for medical datasets and tasks
+
+- **fl/**
+  - Federated learning training (e.g., FedAvg)
+  - Produces a final aggregated global model
+  - Applies inference-time dropout analysis on the aggregated model
+
+- **prior/**
+  - Baseline and prior membership inference implementations
+  - Used for comparative evaluation
 
 > If you are new to the repo, start with `centralized/` and `fl/`. The `prior/` folder is mainly for reproducing baseline comparisons.
 
@@ -24,3 +35,90 @@ Using conda:
 ```bash
 conda create -n mia python=3.10 -y
 conda activate mia
+```
+
+### 2) Install dependencies
+```bash
+pip install -r requirements.txt
+```
+### 3) Centralized learning pipeline
+
+## Step 1: Train a centralized target model
+
+```bash
+python centralized/train.py \
+  --dataset cifar10 \
+  --model resnet18 \
+  --epochs 50 \
+  --batch_size 64 \
+  --device cuda:0
+```
+This produces a trained target model, typically saved under a path such as:
+```bash
+dropout_results/<dataset>/<model>.pth
+```
+
+## Step 2: Inference-time dropout analysis (centralized)
+Inference-time dropout is activated with varying probabilities, and multiple stochastic forward passes are used to estimate output deviation.
+
+```bash
+python centralized/abilation.py \
+  --dataset cifar10 \
+  --model resnet18 \
+  --checkpoint dropout_results/cifar10/resnet18.pth \
+  --device cuda:0
+```
+
+Typical experimental configuration used in this repository:
+- Dropout probabilities: 0.01 to 0.10
+- Number of stochastic passes per sample: T = 5
+- Metrics: accuracy fluctuation, standard deviation, averaged deviation across samples
+
+
+### 4) Federated learning pipeline
+
+## Step 1: Train a federated model
+  Run federated training with multiple clients and communication rounds:
+
+```bash
+python fl/train_fl.py \
+  --dataset cifar10 \
+  --model resnet18 \
+  --fed_algo fedavg \
+  --clients 10 \
+  --rounds 10 \
+  --local_epochs 10 \
+  --device cuda:0
+```
+
+This produces a final aggregated global model, typically saved as:
+
+```bash
+checkpoints/fl/<dataset>_<model>_<fed_algo>_global.pth
+```
+
+## Step 2: Inference-time dropout analysis on the FL global model
+The final aggregated global model is treated as the victim model for inference-time dropout analysis.
+
+```bash
+
+python fl/dropout_inference.py \
+  --dataset cifar10 \
+  --model resnet18 \
+  --checkpoint checkpoints/fl/cifar10_resnet18_fedavg_global.pth \
+  --device cuda:0
+```
+
+This enables direct comparison between centralized and federated models under an identical inference protocol.
+
+## Troubleshooting
+- Checkpoint loading errors
+  - Some checkpoints may store weights under state_dict
+  - Use strict=False if required
+- Dropout not activating
+  - Ensure dropout layers are explicitly set to training mode during inference
+- GPU selection
+  - Use --device cuda:X where X is the GPU index
+
+
+

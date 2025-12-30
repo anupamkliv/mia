@@ -1,0 +1,20 @@
+# Core ML and Deep Learning
+torch>=1.12.0
+torchvision>=0.13.0
+torchaudio>=0.12.0
+
+# Numerical and data utilities
+numpy>=1.22.0
+pandas>=1.4.0
+
+# Dataset helpers and ML utilities
+scikit-learn>=1.0.0
+
+# Progress bars
+tqdm>=4.64.0
+
+# Plotting and visualization
+matplotlib>=3.5.0
+
+# Optional utilities
+Pillow>=9.0.0
